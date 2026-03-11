@@ -1,15 +1,23 @@
 import express from 'express';
-import usersRoutes from './routes/user.routes.js';
-import tasksRoutes from './routes/tasks.routes.js';
+
+import rutasUsuarios from './src/routes/users-routes.js';
+import rutasTareas   from './src/routes/tasks-routes.js';
 
 const app = express();
-const port = 3000;
+const puerto = 3000;
+
 
 app.use(express.json());
 
-app.use(usersRoutes);
-app.use(tasksRoutes);
+app.use('/api/usuarios', rutasUsuarios);
+app.use('/api/tareas',   rutasTareas);
 
-app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`);
+app.get('/', (req, res) => {
+    res.send('Servidor de ArreglosApp corriendo correctamente 🚀');
+});
+
+app.listen(puerto, () => {
+    console.log(`Servidor corriendo en http://localhost:${puerto}`);
+    console.log(`Rutas de Usuarios: http://localhost:${puerto}/api/usuarios`);
+    console.log(`Rutas de Tareas: http://localhost:${puerto}/api/tareas`);
 });
