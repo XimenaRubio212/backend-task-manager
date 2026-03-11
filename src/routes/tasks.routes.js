@@ -1,17 +1,12 @@
-import { Router } from 'express';
+import express from 'express';
+import routesUsers from '../routes/user.routes.js';
 
-const router = Router();
+const app = express();
+const puerto = 3000;
 
-router.get('/users', (req, res) => {
-    res.json({
-        message: "Se listarán los usuarios"
-    });
+app.use(express.json());
+app.use('/api/users', routesUsers);
+
+app.listen(puerto, () => {
+    console.log(`Example app listening on port ${puerto}`);
 });
-
-router.post('/users', (req, res) => {
-    res.json({
-        message: "Se creará un usuario"
-    });
-});
-
-export default router;

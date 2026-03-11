@@ -2,9 +2,9 @@ import { Router } from 'express';
 
 const router = Router();
 
-router.get('/tasks', (req, res) => {
+router.get('/users', (req, res) => {
     res.json({
-        message: "Se listarán las tareas"
+        message: "Se listarán los usuarios"
     });
 });
 
