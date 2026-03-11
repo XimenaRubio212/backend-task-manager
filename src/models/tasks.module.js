@@ -8,7 +8,7 @@ export function crear(datos) {
         descripcion: datos.description || "",
         estado: "pending",
         prioridad: datos.priority || "medio",
-        usuariosAsignados: datos.assignedUsers || [],
+        assignedUsers: datos.assignedUsers || [],
         fechaCreacion: new Date(),
         fechaVencimiento: datos.dueDate ? new Date(datos.dueDate) : null,
         usuarioId: datos.userId || null,
@@ -28,7 +28,7 @@ export function obtenerPorId(id) {
 export function actualizar(id, nuevosDatos) {
     let tarea = obtenerPorId(id);
     if (tarea) {
-        let { estado, usuariosAsignados, fechaCreacion, ...datosSeguros } = nuevosDatos;
+        let { estado, assignedUsers, fechaCreacion, ...datosSeguros } = nuevosDatos;
         Object.assign(tarea, datosSeguros);
         if (nuevosDatos.dueDate) tarea.fechaVencimiento = new Date(nuevosDatos.dueDate);
         return tarea;
@@ -59,8 +59,8 @@ export function asignarUsuarios(tareaId, usuarioIds) {
     if (!tarea) return null;
 
     usuarioIds.forEach(uid => {
-        if (!tarea.usuariosAsignados.includes(uid)) {
-            tarea.usuariosAsignados.push(uid);
+        if (!tarea.assignedUsers.includes(uid)) {
+            tarea.assignedUsers.push(uid);
         }
     });
     return tarea;
@@ -69,17 +69,17 @@ export function asignarUsuarios(tareaId, usuarioIds) {
 export function obtenerUsuariosAsignados(tareaId) {
     let tarea = obtenerPorId(tareaId);
     if (!tarea) return null;
-    return tarea.usuariosAsignados;
+    return tarea.assignedUsers;
 }
 
 export function removerUsuario(tareaId, usuarioId) {
     let tarea = obtenerPorId(tareaId);
     if (!tarea) return null;
 
-    let indice = tarea.usuariosAsignados.findIndex(uid => uid == usuarioId);
+    let indice = tarea.assignedUsers.findIndex(uid => uid == usuarioId);
     if (indice === -1) return false;
 
-    tarea.usuariosAsignados.splice(indice, 1);
+    tarea.assignedUsers.splice(indice, 1);
     return true;
 }
 
@@ -88,7 +88,7 @@ export function filtrarTareasModel({ estado, prioridad, usuarioId, fechaInicio, 
 
     if (estado)      resultado = resultado.filter(t => t.estado === estado);
     if (prioridad)   resultado = resultado.filter(t => t.prioridad === prioridad);
-    if (usuarioId)   resultado = resultado.filter(t => t.usuariosAsignados.includes(Number(usuarioId)));
+    if (usuarioId)   resultado = resultado.filter(t => t.assignedUsers.includes(Number(usuarioId)));
     if (fechaInicio) resultado = resultado.filter(t => t.fechaCreacion >= new Date(fechaInicio));
     if (fechaFin)    resultado = resultado.filter(t => t.fechaCreacion <= new Date(fechaFin));
 

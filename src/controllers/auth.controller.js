@@ -1,4 +1,4 @@
-import { buscarPorEmail, generarToken } from '../models/authModel.js';
+import { buscarPorEmail, generarToken } from '../models/auth.module.js';
 
 export function login(req, res) {
     try {

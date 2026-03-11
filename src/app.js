@@ -1,7 +1,7 @@
 import express from 'express';
-import rutasUsuarios from './src/routes/user.routes.js';
-import rutasTareas   from './src/routes/task.routes.js';
-import rutasAuth     from './src/routes/auth.routes.js';
+import rutasUsuarios from './routes/user.routes.js';
+import rutasTareas   from './routes/tasks.routes.js';
+import rutasAuth     from './routes/auth.routes.js';
 
 const app = express();
 const puerto = 3000;

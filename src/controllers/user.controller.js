@@ -1,12 +1,12 @@
-import { 
-    crear, 
-    obtenerTodos, 
-    obtenerPorId, 
-    obtenerPorEmail, 
-    actualizar, 
-    actualizarEstado, 
-    eliminar, 
-    obtenerTareasPorUsuario 
+import {
+    crear,
+    obtenerTodos,
+    obtenerPorId,
+    obtenerPorEmail,
+    actualizar,
+    actualizarEstado,
+    eliminar,
+    obtenerTareasPorUsuario
 } from '../models/user.module.js';
 
 export function crearUsuario(req, res) {
