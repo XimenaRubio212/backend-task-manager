@@ -1,39 +1,39 @@
-// ============================================================
-// controllers/userController.js
-// Recibe req/res, valida datos y llama al modelo
-// ============================================================
+import { 
+    crear, 
+    obtenerTodos, 
+    obtenerPorId, 
+    obtenerPorEmail, 
+    actualizar, 
+    actualizarEstado, 
+    eliminar, 
+    obtenerTareasPorUsuario 
+} from '../models/user.module.js';
 
-import { create, seeOne, seeByEmail, update, updateStatusUser, destroy, seeTasksByUser } from '../models/user.module.js';
-
-// POST /api/users — Crear nuevo usuario
-export function createUser(req, res) {
+export function crearUsuario(req, res) {
     try {
         let datos = req.body;
 
-        // Validar campos obligatorios
-        if (!datos.name || !datos.email) {
+        if (!datos.nombre || !datos.email) {
             return res.status(400).json({
-                mensaje: "Los campos 'name' y 'email' son obligatorios"
+                mensaje: "Los campos 'nombre' y 'email' son obligatorios"
             });
         }
 
-        // Validar email duplicado
-        let usuarioExistente = seeByEmail(datos.email);
+        let usuarioExistente = obtenerPorEmail(datos.email);
         if (usuarioExistente) {
             return res.status(409).json({
                 mensaje: "Ya existe un usuario con ese email"
             });
         }
 
-        // Validar rol permitido
         let rolesPermitidos = ["admin", "user"];
-        if (datos.role && !rolesPermitidos.includes(datos.role)) {
+        if (datos.rol && !rolesPermitidos.includes(datos.rol)) {
             return res.status(400).json({
                 mensaje: `El rol debe ser: ${rolesPermitidos.join(" o ")}`
             });
         }
 
-        let resultado = create(datos);
+        let resultado = crear(datos);
         res.status(201).json({
             mensaje: "Usuario creado con éxito",
             data: resultado
@@ -46,10 +46,9 @@ export function createUser(req, res) {
     }
 }
 
-// GET /api/users — Listar todos los usuarios
-export function getAllUsers(req, res) {
+export function obtenerTodosLosUsuarios(req, res) {
     try {
-        let datos = seeAll();
+        let datos = obtenerTodos();
         res.status(200).json({
             mensaje: "Consulta de todos los usuarios",
             total: datos.length,
@@ -63,11 +62,10 @@ export function getAllUsers(req, res) {
     }
 }
 
-// GET /api/users/:id — Obtener un usuario específico
-export function getUserById(req, res) {
+export function obtenerUsuarioPorId(req, res) {
     try {
         let id = req.params.id;
-        let datos = seeOne(id);
+        let datos = obtenerPorId(id);
 
         if (!datos) {
             return res.status(404).json({
@@ -87,23 +85,20 @@ export function getUserById(req, res) {
     }
 }
 
-// PUT /api/users/:id — Actualizar información de usuario
-export function updateUser(req, res) {
+export function actualizarUsuario(req, res) {
     try {
         let id = req.params.id;
         let datos = req.body;
 
-        // Verificar que el usuario existe
-        let usuarioExistente = seeOne(id);
+        let usuarioExistente = obtenerPorId(id);
         if (!usuarioExistente) {
             return res.status(404).json({
                 mensaje: `No se encontró ningún usuario con ID ${id}`
             });
         }
 
-        // Si viene email, verificar que no lo use otro usuario
         if (datos.email) {
-            let usuarioConEmail = seeByEmail(datos.email);
+            let usuarioConEmail = obtenerPorEmail(datos.email);
             if (usuarioConEmail && usuarioConEmail.id != id) {
                 return res.status(409).json({
                     mensaje: "Ese email ya está en uso por otro usuario"
@@ -111,15 +106,14 @@ export function updateUser(req, res) {
             }
         }
 
-        // Validar rol si viene
         let rolesPermitidos = ["admin", "user"];
-        if (datos.role && !rolesPermitidos.includes(datos.role)) {
+        if (datos.rol && !rolesPermitidos.includes(datos.rol)) {
             return res.status(400).json({
                 mensaje: `El rol debe ser: ${rolesPermitidos.join(" o ")}`
             });
         }
 
-        let resultado = update(id, datos);
+        let resultado = actualizar(id, datos);
         res.status(200).json({
             mensaje: "Usuario actualizado con éxito",
             data: resultado
@@ -132,11 +126,10 @@ export function updateUser(req, res) {
     }
 }
 
-// DELETE /api/users/:id — Eliminar un usuario
-export function deleteUser(req, res) {
+export function eliminarUsuario(req, res) {
     try {
         let id = req.params.id;
-        let eliminado = destroy(id);
+        let eliminado = eliminar(id);
 
         if (!eliminado) {
             return res.status(404).json({
@@ -155,21 +148,19 @@ export function deleteUser(req, res) {
     }
 }
 
-// PATCH /api/users/:id/status — Activar o desactivar usuario
-export function updateStatusUser(req, res) {
+export function actualizarEstadoUsuario(req, res) {
     try {
         let id = req.params.id;
-        let { status } = req.body;
+        let { estado } = req.body;
 
-        // Validar que venga un status válido
-        let statusPermitidos = ["active", "inactive"];
-        if (!status || !statusPermitidos.includes(status)) {
+        let estadosPermitidos = ["active", "inactive"];
+        if (!estado || !estadosPermitidos.includes(estado)) {
             return res.status(400).json({
-                mensaje: `El campo 'status' es obligatorio y debe ser: ${statusPermitidos.join(" o ")}`
+                mensaje: `El campo 'estado' es obligatorio y debe ser: ${estadosPermitidos.join(" o ")}`
             });
         }
 
-        let resultado = actualizarStatus(id, status);
+        let resultado = actualizarEstado(id, estado);
 
         if (!resultado) {
             return res.status(404).json({
@@ -178,7 +169,7 @@ export function updateStatusUser(req, res) {
         }
 
         res.status(200).json({
-            mensaje: `Usuario ${status === "active" ? "activado" : "desactivado"} con éxito`,
+            mensaje: `Usuario ${estado === "active" ? "activado" : "desactivado"} con éxito`,
             data: resultado
         });
     } catch (error) {
@@ -189,22 +180,20 @@ export function updateStatusUser(req, res) {
     }
 }
 
-// GET /api/users/:userId/tasks — Tareas asignadas a un usuario
-export function seeTasksByUser(req, res) {
+export function verTareasPorUsuario(req, res) {
     try {
-        let userId = req.params.userId;
+        let usuarioId = req.params.userId;
 
-        // Verificar que el usuario existe antes de buscar sus tareas
-        let usuario = seeOne(userId);
+        let usuario = obtenerPorId(usuarioId);
         if (!usuario) {
             return res.status(404).json({
-                mensaje: `No se encontró ningún usuario con ID ${userId}`
+                mensaje: `No se encontró ningún usuario con ID ${usuarioId}`
             });
         }
 
-        let tareas = seeTasksByUser(userId);
+        let tareas = obtenerTareasPorUsuario(usuarioId);
         res.status(200).json({
-            mensaje: `Tareas del usuario "${usuario.name}"`,
+            mensaje: `Tareas del usuario "${usuario.nombre || usuario.name}"`,
             total: tareas.length,
             data: tareas
         });

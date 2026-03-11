@@ -1,15 +1,23 @@
 import { Router } from "express";
-import { createUser, getAllUsers, getUserById, updateUser, deleteUser, updateUserStatus, getUserTasks } from "../controllers/user.controller.js";
-import { seeTasksByUser, updateStatusUser } from "../models/user.module.js";
+// Importamos los nombres actualizados del controlador de usuarios
+import { 
+    crearUsuario, 
+    obtenerTodosLosUsuarios, 
+    obtenerUsuarioPorId, 
+    actualizarUsuario, 
+    eliminarUsuario, 
+    actualizarEstadoUsuario, 
+    verTareasPorUsuario 
+} from "../controllers/user.controller.js";
 
 const router = Router();
 
-router.post('/', createUser);
-router.get('/', getAllUsers);
-router.get('/:id', getUserById);
-router.put('/:id', updateUser);
-router.delete('/:id', deleteUser);
-router.patch('/:id/status', updateStatusUser);
-router.get('/:userId/tasks', seeTasksByUser);
+router.post('/', crearUsuario);
+router.get('/', obtenerTodosLosUsuarios);
+router.get('/:id', obtenerUsuarioPorId);
+router.put('/:id', actualizarUsuario);
+router.delete('/:id', eliminarUsuario);
+router.patch('/:id/status', actualizarEstadoUsuario);
+router.get('/:userId/tasks', verTareasPorUsuario);
 
 export default router;
